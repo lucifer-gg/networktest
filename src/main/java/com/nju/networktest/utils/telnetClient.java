@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-@Component
 public class telnetClient {
     private String prompt = "#";        //结束标识字符串,Windows中是>,Linux中是#
     private char promptChar = '>';        //结束标识字符
@@ -30,7 +29,7 @@ public class telnetClient {
     }
 
     public telnetClient() {
-        telnet = new TelnetClient();
+        telnet = new TelnetClient("VT220");
     }
 
     /**
@@ -150,7 +149,7 @@ public class telnetClient {
 
     public static void main(String[] args) {
         telnetClient telnet = new telnetClient("VT220","#");        //Windows,用VT220,否则会乱码
-        if(telnet.login("172.16.0.3", 23, "CISCO")){
+        if(telnet.login("172.16.0.3", 23, "cisco")){
             System.out.println("login");
             String rs = telnet.sendCommand("sh ip route");
             System.out.println(rs);

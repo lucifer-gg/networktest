@@ -1,7 +1,8 @@
 package com.nju.networktest.service.Impl;
 
 import com.nju.networktest.service.NetworkService;
-import com.nju.networktest.utils.telnetClient;
+import com.nju.networktest.utils.TelnetConnect;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,18 +10,17 @@ import org.springframework.stereotype.Service;
 public class NetworkServiceImpl implements NetworkService {
 
     @Autowired
-    telnetClient telnetClient;
+    TelnetConnect telnetConnect;
 
     @Override
     public String executeCommand(String directive) {
-        return telnetClient.sendCommand(directive);
+
+        return "";
     }
 
     //获取端口状态
     @Override
     public String getPortState(String portId) {
-        String command="查询命令";
-
         String res="up";
         return res;
     }

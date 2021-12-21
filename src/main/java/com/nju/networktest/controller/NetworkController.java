@@ -22,7 +22,7 @@ public class NetworkController {
     }
 
     //交互式指令执行
-    @PostMapping("/execute")
+    @GetMapping("/execute")
     public BasicResponse<String> executeCommand(@RequestParam("directive")String directive){
         try{
             String s = networkService.executeCommand(directive);
