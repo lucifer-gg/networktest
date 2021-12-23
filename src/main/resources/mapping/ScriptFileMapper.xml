@@ -1,8 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nju.networktest.mapper.ScriptFileMapper">
-    <select id="test" resultType="java.lang.Integer">
-        SELECT distinct id from user where id > #{id};
+    <select id="getScriptFile" parameterType="string" resultMap="ScriptFilePO">
+        SELECT * from scripts where file_name=#{fileName};
     </select>
+
+    <insert id="insertScriptFile" parameterType="ScriptFilePO" useGeneratedKeys="true" keyProperty="id">
+        insert into scripts (file_name,uselessInfo) values (#{fileName},#{uselessInfo})
+    </insert>
+
+    <insert id="insertScriptCommand">
+        insert into script_commands (script_file_id,router_name,command_order,command) values (#{fileId},#{routerName},#{commandOrder},#{command})
+    </insert>
+
+    <select id="getCommands" resultType="String">
+        select command
+        from script_commands
+        where script_file_id=#{id} and router_name=#{routerName}
+        order by command_order
+    </select>
+
+    <delete id="deleteScriptFile" parameterType="string">
+        delete from scripts where file_name=#{fileName}
+    </delete>
+
+    <delete id="deleteScriptCommands" parameterType="int">
+        delete from script_commands where script_file_id=#{fileId}
+    </delete>
+
+    <select id="getFileIdByName" parameterType="string" resultType="int">
+        select id from scripts where file_name=#{fileName};
+    </select>
+
+    <select id="getAllScriptFileName" resultType="string">
+        select file_name from scripts;
+    </select>
+
+
+    <resultMap id="ScriptFilePO" type="com.nju.networktest.entity.po.ScriptFilePO">
+        <result property="id" column="id"></result>
+        <result property="fileName" column="file_name"></result>
+        <result property="uselessInfo" column="uselessInfo"></result>
+    </resultMap>
+
+
 
 </mapper>

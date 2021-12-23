@@ -17,26 +17,26 @@ public class NetworkController {
 
 
     @GetMapping("/test")
-    public BasicResponse<String> test(int id){
+    public BasicResponse test(int id){
         return new BasicResponse(ResponseStatus.STATUS_SUCCESS,scriptFileMapper.test(id));
     }
 
     //交互式指令执行
     @GetMapping("/execute")
-    public BasicResponse<String> executeCommand(@RequestParam("directive")String directive){
+    public BasicResponse executeCommand(@RequestParam("directive")String directive,@RequestParam("hostName")String hostName){
         try{
-            String s = networkService.executeCommand(directive);
-            return new BasicResponse<String>(ResponseStatus.STATUS_SUCCESS,s);
+            String s = networkService.executeCommand(directive,hostName);
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,s);
         }catch (Exception e){
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
         }
     }
 
     @GetMapping("/getPortState")
-    public BasicResponse<String> getPortState(@RequestParam("portId")String portId){
+    public BasicResponse getPortState(@RequestParam("portId")String portId,@RequestParam("address")String address){
         try{
-            String portState = networkService.getPortState(portId);
-            return new BasicResponse<String>(ResponseStatus.STATUS_SUCCESS,portState);
+            boolean state = networkService.getPortState(portId,address);
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,state);
         }catch (Exception e){
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
         }

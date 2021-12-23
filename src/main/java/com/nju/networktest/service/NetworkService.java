@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public interface NetworkService {
 
 
-    public String executeCommand(String directive);
+    public String executeCommand(String directive,String hostName);
 
-    public String getPortState(String portId);
+    public boolean getPortState(String portId,String address);
 
 }

@@ -34,9 +34,9 @@ public class TelnetConnect {
     }
 
     public telnetClient getTelnetClientByName(String routerName){
-        if("RouterA".equals(routerName)){
+        if("routerA".equals(routerName)){
             return telnetClientForRouterA;
-        }else if("RouterB".equals(routerName)){
+        }else if("routerB".equals(routerName)){
             return telnetClientForRouterB;
         }else {
             return telnetClientForRouterC;
