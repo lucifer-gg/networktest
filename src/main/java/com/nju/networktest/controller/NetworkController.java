@@ -28,6 +28,21 @@ public class NetworkController {
             String s = networkService.executeCommand(directive,hostName);
             return new BasicResponse(ResponseStatus.STATUS_SUCCESS,s);
         }catch (Exception e){
+            e.printStackTrace();
+            return new BasicResponse(ResponseStatus.SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/reload")
+    public BasicResponse reload(@RequestParam("hostName")String hostName){
+        try{
+            if("all".equals(hostName)){
+                return new BasicResponse(ResponseStatus.STATUS_SUCCESS,networkService.reloadAll());
+            }else {
+                return new BasicResponse(ResponseStatus.STATUS_SUCCESS,networkService.reload(hostName));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
         }
     }
@@ -38,8 +53,20 @@ public class NetworkController {
             boolean state = networkService.getPortState(portId,address);
             return new BasicResponse(ResponseStatus.STATUS_SUCCESS,state);
         }catch (Exception e){
+            e.printStackTrace();
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/establishConnect")
+    public BasicResponse establishConnect(){
+        try{
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,networkService.establishConnect());
+        }catch (Exception e){
+            e.printStackTrace();
+            return new BasicResponse(ResponseStatus.SERVER_ERROR);
+        }
+
     }
 
 }
