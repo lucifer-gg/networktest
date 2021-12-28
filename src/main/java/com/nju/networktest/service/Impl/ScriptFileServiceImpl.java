@@ -81,14 +81,73 @@ public class ScriptFileServiceImpl implements ScriptFileService {
     @Override
     public ScriptFile getConfigureScripts(String scriptFileName) {
         List<ScriptFilePO> scriptFilePOs = scriptFileMapper.getScriptFile(scriptFileName);
-        if(scriptFilePOs.size()==0)return new ScriptFile();
+
+        if(scriptFilePOs.size()==0){
+            return new ScriptFile();
+        }
         ScriptFilePO scriptFilePO=scriptFilePOs.get(0);
         List<String> commandsForrouterA = scriptFileMapper.getCommands(scriptFilePO.getId(), "routerA");
         List<String> commandsForrouterB = scriptFileMapper.getCommands(scriptFilePO.getId(), "routerB");
         List<String> commandsForrouterC = scriptFileMapper.getCommands(scriptFilePO.getId(), "routerC");
         CommandList commandList=new CommandList(commandsForrouterA,commandsForrouterB,commandsForrouterC);
+
         ScriptFile scriptFile=new ScriptFile(scriptFilePO,commandList);
         return scriptFile;
+    }
+
+    @Override
+    public ExecuteScriptFileVO executeConf(String scriptFileName) {
+        ExecuteScriptFileVO executeScriptFileVO=new ExecuteScriptFileVO();
+        ScriptFile configureScriptFile = getConfigureScripts(scriptFileName);
+        executeScriptFileVO.setScriptFile(configureScriptFile);
+        StringBuilder sb=new StringBuilder();
+        ConsoleOutput consoleOutput=new ConsoleOutput();
+        executeScriptFileVO.setConsoleOutput(consoleOutput);
+
+        telnetClient telnetClientToRouterA = telnetConnect.getTelnetClientByName("routerA");
+        List<String> routerACommandList = configureScriptFile.getCommand().getRouterA();
+        System.out.println(routerACommandList.size());
+        for (String command:routerACommandList){
+            String res = telnetClientToRouterA.sendCommand(command);
+            System.out.println("---command---");
+            System.out.println(command);
+            System.out.println("---res------");
+            System.out.println(res);
+            System.out.println("--end--");
+            sb.append(res+"\n");
+        }
+        consoleOutput.setRouterA(sb.toString());
+
+        sb=new StringBuilder();
+        telnetClient telnetClientToRouterB = telnetConnect.getTelnetClientByName("routerB");
+        List<String> routerBCommandList = configureScriptFile.getCommand().getRouterB();
+        System.out.println(routerBCommandList.size());
+        for (String command:routerBCommandList){
+            String res = telnetClientToRouterB.sendCommand(command);
+            System.out.println("---command---");
+            System.out.println(command);
+            System.out.println("---res------");
+            System.out.println(res);
+            System.out.println("--end--");
+            sb.append(res+"\n");
+        }
+        consoleOutput.setRouterB(sb.toString());
+
+        sb=new StringBuilder();
+        telnetClient telnetClientToRouterC = telnetConnect.getTelnetClientByName("routerC");
+        List<String> routerCCommandList = configureScriptFile.getCommand().getRouterC();
+        System.out.println(routerCCommandList.size());
+        for (String command:routerCCommandList){
+            String res = telnetClientToRouterC.sendCommand(command);
+            System.out.println("---command---");
+            System.out.println(command);
+            System.out.println("---res------");
+            System.out.println(res);
+            System.out.println("--end--");
+            sb.append(res+"\n");
+        }
+        consoleOutput.setRouterC(sb.toString());
+        return executeScriptFileVO;
     }
 
 //    @Override
@@ -96,63 +155,26 @@ public class ScriptFileServiceImpl implements ScriptFileService {
 //        ExecuteScriptFileVO executeScriptFileVO=new ExecuteScriptFileVO();
 //        ScriptFile configureScriptFile = getConfigureScripts(scriptFileName);
 //        executeScriptFileVO.setScriptFile(configureScriptFile);
-//        StringBuilder sb=new StringBuilder();
-//        ConsoleOutput consoleOutput=new ConsoleOutput();
-//        executeScriptFileVO.setConsoleOutput(consoleOutput);
 //
 //        telnetClient telnetClientToRouterA = telnetConnect.getTelnetClientByName("routerA");
 //        List<String> routerACommandList = configureScriptFile.getCommand().getRouterA();
 //        for (String command:routerACommandList){
-//            String res = telnetClientToRouterA.sendCommand(command);
-//            sb.append(res+"\n");
+//            telnetClientToRouterA.write(command);
 //        }
-//        consoleOutput.setRouterA(sb.toString());
 //
-//        sb=new StringBuilder();
 //        telnetClient telnetClientToRouterB = telnetConnect.getTelnetClientByName("routerB");
 //        List<String> routerBCommandList = configureScriptFile.getCommand().getRouterB();
 //        for (String command:routerBCommandList){
-//            String res = telnetClientToRouterB.sendCommand(command);
-//            sb.append(res+"\n");
+//            telnetClientToRouterB.write(command);
 //        }
-//        consoleOutput.setRouterB(sb.toString());
 //
-//        sb=new StringBuilder();
-//        telnetClient telnetClientToRouterC = telnetConnect.getTelnetClientByName("routerC");
-//        List<String> routerCCommandList = configureScriptFile.getCommand().getRouterC();
-//        for (String command:routerCCommandList){
-//            String res = telnetClientToRouterC.sendCommand(command);
-//            sb.append(res+"\n");
-//        }
-//        consoleOutput.setRouterC(sb.toString());
+////        telnetClient telnetClientToRouterC = telnetConnect.getTelnetClientByName("routerC");
+////        List<String> routerCCommandList = configureScriptFile.getCommand().getRouterC();
+////        for (String command:routerCCommandList){
+////            telnetClientToRouterC.write(command);
+////        }
 //        return executeScriptFileVO;
 //    }
-
-    @Override
-    public ExecuteScriptFileVO executeConf(String scriptFileName) {
-        ExecuteScriptFileVO executeScriptFileVO=new ExecuteScriptFileVO();
-        ScriptFile configureScriptFile = getConfigureScripts(scriptFileName);
-        executeScriptFileVO.setScriptFile(configureScriptFile);
-
-        telnetClient telnetClientToRouterA = telnetConnect.getTelnetClientByName("routerA");
-        List<String> routerACommandList = configureScriptFile.getCommand().getRouterA();
-        for (String command:routerACommandList){
-            telnetClientToRouterA.write(command);
-        }
-
-        telnetClient telnetClientToRouterB = telnetConnect.getTelnetClientByName("routerB");
-        List<String> routerBCommandList = configureScriptFile.getCommand().getRouterB();
-        for (String command:routerBCommandList){
-            telnetClientToRouterB.write(command);
-        }
-
-        telnetClient telnetClientToRouterC = telnetConnect.getTelnetClientByName("routerC");
-        List<String> routerCCommandList = configureScriptFile.getCommand().getRouterC();
-        for (String command:routerCCommandList){
-            telnetClientToRouterC.write(command);
-        }
-        return executeScriptFileVO;
-    }
 
 
 }

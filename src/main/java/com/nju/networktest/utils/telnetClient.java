@@ -41,9 +41,9 @@ public class telnetClient {
      */
     public Boolean login(String ip, int port, String password) {
         try {
-            telnet.setSoTimeout(Integer.MAX_VALUE);
-            telnet.setConnectTimeout(Integer.MAX_VALUE);
-            telnet.setDefaultTimeout(Integer.MAX_VALUE);
+//            telnet.setSoTimeout(Integer.MAX_VALUE);
+//            telnet.setConnectTimeout(Integer.MAX_VALUE);
+//            telnet.setDefaultTimeout(Integer.MAX_VALUE);
             telnet.connect(ip, port);
             in = telnet.getInputStream();
             out = new PrintStream(telnet.getOutputStream());

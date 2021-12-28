@@ -4,9 +4,9 @@ import org.springframework.stereotype.Component;
 @Component
 //这个类用来维持三个telnet连接
 public class TelnetConnect {
-    public String ipA="100.0.0.3";
-    public String ipB="192.168.0.2";
-    public String ipC="192.168.0.3";
+    public String ipA="192.168.80.1";
+    public String ipB="192.168.80.2";
+    public String ipC="192.168.80.3";
 
     public telnetClient telnetClientForRouterA;
     public telnetClient telnetClientForRouterB;
@@ -15,11 +15,11 @@ public class TelnetConnect {
     public TelnetConnect(){
         //创建spring程序的时候只创建对象，不连接
         this.telnetClientForRouterA=new telnetClient("VT220","#");
-//        this.telnetClientForRouterA.login(ipA, 23, "CISCO");
+
         this.telnetClientForRouterB=new telnetClient("VT220","#");
-//        this.telnetClientForRouterB.login(ipB, 23, "cisco");
+
         this.telnetClientForRouterC=new telnetClient("VT220","#");
-//        this.telnetClientForRouterC.login(ipC, 23, "cisco");
+
 //        //启动后就向三台服务器发送保存状态的请求
 
     }
@@ -71,7 +71,8 @@ public class TelnetConnect {
     }
 
     public boolean establishConnect(){
-        if (this.telnetClientForRouterA.login(ipA, 23, "cisco") && this.telnetClientForRouterB.login(ipB, 23, "cisco") && this.telnetClientForRouterC.login(ipC, 23, "cisco")){
+        if (this.telnetClientForRouterA.login(ipA,23,"cisco") && this.telnetClientForRouterB.login(ipB, 23, "cisco") && this.telnetClientForRouterC.login(ipC, 23, "cisco")){
+//        if(this.telnetClientForRouterA.login(ipA, 23, "cisco")){
             return true;
         }
         return false;

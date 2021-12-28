@@ -75,7 +75,7 @@ public class ScriptFileController {
         try {
             ExecuteScriptFileVO executeScriptFileVO = scriptFileService.executeConf(fileName);
             //暂时只返回脚本
-            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,executeScriptFileVO.getScriptFile());
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,executeScriptFileVO.getConsoleOutput());
         } catch (Exception e) {
             e.printStackTrace();
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
