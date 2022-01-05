@@ -83,9 +83,25 @@ public class ScriptFileServiceImpl implements ScriptFileService {
         Map<String,String> map=new HashMap<>();
 
 
-        telnetClient routerA = telnetConnect.getTelnetClientByName("routerA");
-        telnetClient routerB = telnetConnect.getTelnetClientByName("routerB");
-        telnetClient routerC = telnetConnect.getTelnetClientByName("routerC");
+//        telnetClient routerA = telnetConnect.getTelnetClientByName("routerA");
+//        telnetClient routerB = telnetConnect.getTelnetClientByName("routerB");
+//        telnetClient routerC = telnetConnect.getTelnetClientByName("routerC");
+
+
+        telnetClient routerA = new telnetClient("VT220","#");
+        telnetClient routerB = new telnetClient("VT220","#");
+        telnetClient routerC = new telnetClient("VT220","#");
+        if(!routerA.login(telnetConnect.getIpByName("routerA"), 23, "cisco")){
+            System.out.println("与路由器A建立连接失效");
+        }
+        if(!routerB.login(telnetConnect.getIpByName("routerB"), 23, "cisco")){
+            System.out.println("与路由器B建立连接失效");
+        }
+        if(!routerC.login(telnetConnect.getIpByName("routerC"), 23, "cisco")){
+            System.out.println("与路由器C建立连接失效");
+        }
+
+
         TestResult testResult=new TestResult(testScript);
         List<TestResultItem> testA1 = testResult.getRouterA();
         for(TestResultItem testResultItem:testA1){
@@ -109,6 +125,11 @@ public class ScriptFileServiceImpl implements ScriptFileService {
             testResultItem.setOutput(s);
             testResultItem.setFlag(s.contains(map.get(testResultItem.getType())));
         }
+
+        routerA.distinct();
+        routerB.distinct();
+        routerC.distinct();
+
         return testResult;
 
 
@@ -133,6 +154,21 @@ public class ScriptFileServiceImpl implements ScriptFileService {
 
     @Override
     public ExecuteScriptFileVO executeConf(String scriptFileName) {
+        telnetClient telnetA = new telnetClient("VT220","#");
+        telnetClient telnetB = new telnetClient("VT220","#");
+        telnetClient telnetC = new telnetClient("VT220","#");
+        if(!telnetA.login(telnetConnect.getIpByName("routerA"), 23, "cisco")){
+            System.out.println("与路由器A建立连接失效");
+        }
+        if(!telnetB.login(telnetConnect.getIpByName("routerB"), 23, "cisco")){
+            System.out.println("与路由器B建立连接失效");
+        }
+        if(!telnetC.login(telnetConnect.getIpByName("routerC"), 23, "cisco")){
+            System.out.println("与路由器C建立连接失效");
+        }
+
+
+
         ExecuteScriptFileVO executeScriptFileVO=new ExecuteScriptFileVO();
         ScriptFile configureScriptFile = getConfigureScripts(scriptFileName);
         executeScriptFileVO.setScriptFile(configureScriptFile);
@@ -140,49 +176,56 @@ public class ScriptFileServiceImpl implements ScriptFileService {
         ConsoleOutput consoleOutput=new ConsoleOutput();
         executeScriptFileVO.setConsoleOutput(consoleOutput);
 
-        telnetClient telnetClientToRouterA = telnetConnect.getTelnetClientByName("routerA");
+
+
+//        telnetClient telnetA = telnetConnect.getTelnetClientByName("routerA");
         List<String> routerACommandList = configureScriptFile.getCommand().getRouterA();
         System.out.println(routerACommandList.size());
         for (String command:routerACommandList){
-            String res = telnetClientToRouterA.sendCommand(command);
-            System.out.println("---command---");
-            System.out.println(command);
-            System.out.println("---res------");
-            System.out.println(res);
-            System.out.println("--end--");
+            String res = telnetA.sendCommand(command);
+//            System.out.println("---command---");
+//            System.out.println(command);
+//            System.out.println("---res------");
+//            System.out.println(res);
+//            System.out.println("--end--");
             sb.append(res+"\n");
         }
         consoleOutput.setRouterA(sb.toString());
 
         sb=new StringBuilder();
-        telnetClient telnetClientToRouterB = telnetConnect.getTelnetClientByName("routerB");
+//        telnetClient telnetB = telnetConnect.getTelnetClientByName("routerB");
         List<String> routerBCommandList = configureScriptFile.getCommand().getRouterB();
         System.out.println(routerBCommandList.size());
         for (String command:routerBCommandList){
-            String res = telnetClientToRouterB.sendCommand(command);
-            System.out.println("---command---");
-            System.out.println(command);
-            System.out.println("---res------");
-            System.out.println(res);
-            System.out.println("--end--");
+            String res = telnetB.sendCommand(command);
+//            System.out.println("---command---");
+//            System.out.println(command);
+//            System.out.println("---res------");
+//            System.out.println(res);
+//            System.out.println("--end--");
             sb.append(res+"\n");
         }
         consoleOutput.setRouterB(sb.toString());
 
         sb=new StringBuilder();
-        telnetClient telnetClientToRouterC = telnetConnect.getTelnetClientByName("routerC");
+//        telnetClient telnetC = telnetConnect.getTelnetClientByName("routerC");
         List<String> routerCCommandList = configureScriptFile.getCommand().getRouterC();
         System.out.println(routerCCommandList.size());
         for (String command:routerCCommandList){
-            String res = telnetClientToRouterC.sendCommand(command);
-            System.out.println("---command---");
-            System.out.println(command);
-            System.out.println("---res------");
-            System.out.println(res);
-            System.out.println("--end--");
+            String res = telnetC.sendCommand(command);
+//            System.out.println("---command---");
+//            System.out.println(command);
+//            System.out.println("---res------");
+//            System.out.println(res);
+//            System.out.println("--end--");
             sb.append(res+"\n");
         }
         consoleOutput.setRouterC(sb.toString());
+
+        telnetA.distinct();
+        telnetB.distinct();
+        telnetC.distinct();
+
         return executeScriptFileVO;
     }
 

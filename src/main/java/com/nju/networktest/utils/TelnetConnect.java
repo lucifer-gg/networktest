@@ -12,6 +12,13 @@ public class TelnetConnect {
     public telnetClient telnetClientForRouterB;
     public telnetClient telnetClientForRouterC;
 
+    public String getIpByName(String hostName){
+        if("routerA".equals(hostName))return ipA;
+        if("routerB".equals(hostName))return ipB;
+        if("routerC".equals(hostName))return ipC;
+        return null;
+    }
+
     public TelnetConnect(){
         //创建spring程序的时候只创建对象，不连接
         this.telnetClientForRouterA=new telnetClient("VT220","#");

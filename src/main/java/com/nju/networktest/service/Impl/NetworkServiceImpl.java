@@ -42,22 +42,37 @@ public class NetworkServiceImpl implements NetworkService {
     //获取端口状态
     @Override
     public PortState getPortState(String portId,String hostName) {
-        telnetClient telnetClientByIp = telnetConnect.getTelnetClientByName(hostName);
-        String output = telnetClientByIp.sendCommand("show ip int " + portId);
-        //这里再斟酌下，看看返回值到底是什么
-        //可以截取完整的语句，后面改
-        String[] split = output.split("\n");
-        for(String s:split){
-            System.out.println(s);
-            System.out.println("----------------");
+        telnetClient telnet = new telnetClient("VT220","#");
+        if(telnet.login(telnetConnect.getIpByName(hostName), 23, "cisco")){
+            String output = telnet.sendCommand("show ip int " + portId);
+            telnet.distinct();
+            //这里再斟酌下，看看返回值到底是什么
+            //可以截取完整的语句，后面改
+            String[] split = output.split("\n");
+            //第0行还是第一行
+            if(split[1].split(",")[0].contains("down")){
+                return new PortState(hostName,portId,"unassigned","down");
+            }else {
+                String portIpAddress=split[2].replace("Internet address is ","").trim();
+                return new PortState(hostName,portId,portIpAddress,"up");
+            }
+        }else{
+            System.out.println("get port state 建立链接失败");
+//            telnetClient telnetClientByIp = telnetConnect.getTelnetClientByName(hostName);
+//            String output = telnetClientByIp.sendCommand("show ip int " + portId);
+//            //这里再斟酌下，看看返回值到底是什么
+//            //可以截取完整的语句，后面改
+//            String[] split = output.split("\n");
+//            //第0行还是第一行
+//            if(split[1].split(",")[0].contains("down")){
+//                return new PortState(hostName,portId,"unassigned","down");
+//            }else {
+//                String portIpAddress=split[2].replace("Internet address is ","").trim();
+//                return new PortState(hostName,portId,portIpAddress,"up");
+//            }
         }
-        //第0行还是第一行
-        if(split[1].split(",")[0].contains("down")){
-            return new PortState(hostName,portId,"unassigned","down");
-        }else {
-            String portIpAddress=split[2].replace("Internet address is ","").trim();
-            return new PortState(hostName,portId,portIpAddress,"up");
-        }
+
+
     }
 
     @Override
@@ -92,7 +107,6 @@ public class NetworkServiceImpl implements NetworkService {
 
     @Override
     public List<PortState> getRouterState(String hostName) {
-        telnetClient telnetClientByName = telnetConnect.getTelnetClientByName(hostName);
         List<String> portList=new ArrayList<>(Arrays.asList("f0/0","f0/1","s0/0/0","s0/0/1"));
         List<PortState> res=new ArrayList<>();
         for(String portId:portList){
@@ -142,14 +156,37 @@ public class NetworkServiceImpl implements NetworkService {
 
     @Override
     public void flashAll(){
-        telnetConnect.getTelnetClientByName("routerA").sendCommand("copy startup-config running-config","?");
-        String s1= telnetConnect.getTelnetClientByName("routerA").sendCommand("\n");
-        System.out.println(s1);
-        telnetConnect.getTelnetClientByName("routerB").sendCommand("copy startup-config running-config","?");
-        String s2= telnetConnect.getTelnetClientByName("routerB").sendCommand("\n");
-        System.out.println(s2);
-        telnetConnect.getTelnetClientByName("routerC").sendCommand("copy startup-config running-config","?");
-        String s3= telnetConnect.getTelnetClientByName("routerC").sendCommand("\n");
-        System.out.println(s3);
+        telnetClient telnetA = new telnetClient("VT220","#");
+        telnetClient telnetB = new telnetClient("VT220","#");
+        telnetClient telnetC = new telnetClient("VT220","#");
+        if(telnetA.login(telnetConnect.getIpByName("routerA"), 23, "cisco")){
+            telnetA.sendCommand("copy startup-config running-config","?");
+            telnetA.sendCommand("\n");
+        }
+
+        if(telnetB.login(telnetConnect.getIpByName("routerB"), 23, "cisco")){
+            telnetB.sendCommand("copy startup-config running-config","?");
+            telnetB.sendCommand("\n");
+
+        }
+
+        if(telnetC.login(telnetConnect.getIpByName("routerC"), 23, "cisco")){
+
+            telnetC.sendCommand("copy startup-config running-config","?");
+            telnetC.sendCommand("\n");
+        }
+        telnetA.distinct();
+        telnetB.distinct();
+        telnetC.distinct();
+
+//        telnetConnect.getTelnetClientByName("routerA").sendCommand("copy startup-config running-config","?");
+//        String s1= telnetConnect.getTelnetClientByName("routerA").sendCommand("\n");
+//        System.out.println(s1);
+//        telnetConnect.getTelnetClientByName("routerB").sendCommand("copy startup-config running-config","?");
+//        String s2= telnetConnect.getTelnetClientByName("routerB").sendCommand("\n");
+//        System.out.println(s2);
+//        telnetConnect.getTelnetClientByName("routerC").sendCommand("copy startup-config running-config","?");
+//        String s3= telnetConnect.getTelnetClientByName("routerC").sendCommand("\n");
+//        System.out.println(s3);
     }
 }
