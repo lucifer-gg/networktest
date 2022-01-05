@@ -70,7 +70,9 @@ public class NetworkServiceImpl implements NetworkService {
 //                String portIpAddress=split[2].replace("Internet address is ","").trim();
 //                return new PortState(hostName,portId,portIpAddress,"up");
 //            }
+            return null;
         }
+
 
 
     }
