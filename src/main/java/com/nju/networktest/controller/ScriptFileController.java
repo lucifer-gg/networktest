@@ -1,6 +1,8 @@
 package com.nju.networktest.controller;
 
 import com.nju.networktest.entity.ScriptFile;
+import com.nju.networktest.entity.TestResult;
+import com.nju.networktest.entity.TestScript;
 import com.nju.networktest.entity.vo.BasicResponse;
 import com.nju.networktest.entity.vo.ExecuteScriptFileVO;
 import com.nju.networktest.entity.vo.ResponseStatus;
@@ -92,6 +94,18 @@ public class ScriptFileController {
             e.printStackTrace();
             return new BasicResponse(ResponseStatus.SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/executeTest")
+    public BasicResponse executeTest(@RequestBody TestScript testScript){
+        try {
+            TestResult testResult = scriptFileService.executeTest(testScript);
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,testResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BasicResponse(ResponseStatus.SERVER_ERROR);
+        }
+
     }
 
 

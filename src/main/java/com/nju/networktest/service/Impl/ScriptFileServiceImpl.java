@@ -1,8 +1,6 @@
 package com.nju.networktest.service.Impl;
 
-import com.nju.networktest.entity.CommandList;
-import com.nju.networktest.entity.ConsoleOutput;
-import com.nju.networktest.entity.ScriptFile;
+import com.nju.networktest.entity.*;
 import com.nju.networktest.entity.po.ScriptFilePO;
 import com.nju.networktest.entity.vo.ExecuteScriptFileVO;
 import com.nju.networktest.mapper.ScriptFileMapper;
@@ -12,7 +10,9 @@ import com.nju.networktest.utils.telnetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ScriptFileServiceImpl implements ScriptFileService {
@@ -75,6 +75,42 @@ public class ScriptFileServiceImpl implements ScriptFileService {
     @Override
     public List<String> getAllScriptFileName() {
         return scriptFileMapper.getAllScriptFileName();
+
+    }
+
+    @Override
+    public TestResult executeTest(TestScript testScript) {
+        Map<String,String> map=new HashMap<>();
+
+
+        telnetClient routerA = telnetConnect.getTelnetClientByName("routerA");
+        telnetClient routerB = telnetConnect.getTelnetClientByName("routerB");
+        telnetClient routerC = telnetConnect.getTelnetClientByName("routerC");
+        TestResult testResult=new TestResult(testScript);
+        List<TestResultItem> testA1 = testResult.getRouterA();
+        for(TestResultItem testResultItem:testA1){
+            String s = routerA.sendCommand(testResultItem.getCommand());
+            testResultItem.setOutput(s);
+            testResultItem.setFlag(s.contains(map.get(testResultItem.getType())));
+
+        }
+
+        List<TestResultItem> testB1 = testResult.getRouterB();
+        for(TestResultItem testResultItem:testB1){
+            String s = routerB.sendCommand(testResultItem.getCommand());
+            testResultItem.setOutput(s);
+            testResultItem.setFlag(s.contains(map.get(testResultItem.getType())));
+
+        }
+
+        List<TestResultItem> testC1 = testResult.getRouterC();
+        for(TestResultItem testResultItem:testC1){
+            String s = routerC.sendCommand(testResultItem.getCommand());
+            testResultItem.setOutput(s);
+            testResultItem.setFlag(s.contains(map.get(testResultItem.getType())));
+        }
+        return testResult;
+
 
     }
 

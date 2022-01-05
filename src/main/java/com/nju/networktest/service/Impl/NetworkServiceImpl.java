@@ -52,10 +52,10 @@ public class NetworkServiceImpl implements NetworkService {
             System.out.println("----------------");
         }
         //第0行还是第一行
-        if(split[0].contains("down")){
+        if(split[1].split(",")[0].contains("down")){
             return new PortState(hostName,portId,"unassigned","down");
         }else {
-            String portIpAddress=split[1].replace("Internet address is ","").trim();
+            String portIpAddress=split[2].replace("Internet address is ","").trim();
             return new PortState(hostName,portId,portIpAddress,"up");
         }
     }

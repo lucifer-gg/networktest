@@ -92,6 +92,12 @@ public class telnetClient {
 
 
                 if(sb.toString().contains("--More--")){
+                    String s = sb.toString();
+                    s.replace("--More--","");
+                    sb=new StringBuffer();
+                    sb.append(s);
+                    String s1 = sendCommand("\n");
+                    sb.append(s1);
                     return sb.toString();
                 }
                 //登录失败时返回结果
@@ -174,7 +180,9 @@ public class telnetClient {
         if(telnet.login("192.168.80.1", 23, "cisco")){
             System.out.println("login");
 
-            String rs = telnet.sendCommand("copy running-config startup-config","?");
+            String rs = telnet.sendCommand("show ip int f0/1");
+            System.out.println(rs.split("\n")[2].replace("Internet address is ","").trim());
+            System.out.println("----------");
             System.out.println(rs);
             String s = telnet.sendCommand("\n");
             System.out.println(s);
