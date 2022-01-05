@@ -3,10 +3,7 @@ package com.nju.networktest.utils;
 import org.apache.commons.net.telnet.TelnetClient;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 public class telnetClient {
     private String prompt = "#";        //结束标识字符串,Windows中是>,Linux中是#
@@ -78,6 +75,7 @@ public class telnetClient {
                 lastChar = pattern.charAt(pattern.length() - 1);
             char ch;
             int code = -1;
+
             while ((code = in.read()) != -1) {
                 ch = (char) code;
                 sb.append(ch);
@@ -93,7 +91,9 @@ public class telnetClient {
                 }
 
 
-
+                if(sb.toString().contains("--More--")){
+                    return sb.toString();
+                }
                 //登录失败时返回结果
                 if (sb.toString().contains("Login Failed")) {
                     return sb.toString();
@@ -171,16 +171,22 @@ public class telnetClient {
 
     public static void main(String[] args) {
         telnetClient telnet = new telnetClient("VT220","#");        //Windows,用VT220,否则会乱码
-        if(telnet.login("172.16.0.3", 23, "CISCO")){
+        if(telnet.login("192.168.80.1", 23, "cisco")){
             System.out.println("login");
-            String rs = telnet.sendCommand("sh ip route");
+
+            String rs = telnet.sendCommand("copy running-config startup-config","?");
             System.out.println(rs);
+            String s = telnet.sendCommand("\n");
+            System.out.println(s);
+
+
+
             try {
                 rs = new String(rs.getBytes("ISO-8859-1"),"GBK");        //转一下编码
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            System.out.println(rs);
+            //System.out.println(rs);
         }
     }
 }

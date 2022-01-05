@@ -7,6 +7,8 @@ import com.nju.networktest.utils.telnetClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+
 @Service
 public class NetworkServiceImpl implements NetworkService {
 
@@ -16,7 +18,20 @@ public class NetworkServiceImpl implements NetworkService {
     @Override
     public String executeCommand(String directive,String hostName) {
         telnetClient telnetClientByName = telnetConnect.getTelnetClientByName(hostName);
-        return telnetClientByName.sendCommand(directive);
+        String ss = telnetClientByName.sendCommand(directive);
+        System.out.println("---编码前");
+        System.out.println(ss);
+        System.out.println(ss.indexOf("!"));
+        System.out.println("--编码后--");
+        try {
+            ss = new String(ss.getBytes("ISO-8859-1"),"GBK");
+            System.out.println(ss);
+            System.out.println("----");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return ss;
 
     }
 
@@ -68,5 +83,18 @@ public class NetworkServiceImpl implements NetworkService {
 
         return true;
 
+    }
+
+    @Override
+    public void flashAll(){
+        telnetConnect.getTelnetClientByName("routerA").sendCommand("copy startup-config running-config","?");
+        String s1= telnetConnect.getTelnetClientByName("routerA").sendCommand("\n");
+        System.out.println(s1);
+        telnetConnect.getTelnetClientByName("routerB").sendCommand("copy startup-config running-config","?");
+        String s2= telnetConnect.getTelnetClientByName("routerB").sendCommand("\n");
+        System.out.println(s2);
+        telnetConnect.getTelnetClientByName("routerC").sendCommand("copy startup-config running-config","?");
+        String s3= telnetConnect.getTelnetClientByName("routerC").sendCommand("\n");
+        System.out.println(s3);
     }
 }

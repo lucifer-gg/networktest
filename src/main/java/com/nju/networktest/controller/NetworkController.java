@@ -69,4 +69,15 @@ public class NetworkController {
 
     }
 
+    @GetMapping("/flashAll")
+    public BasicResponse flashAll(){
+        try {
+            networkService.flashAll();
+            return new BasicResponse(ResponseStatus.STATUS_SUCCESS,true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BasicResponse(ResponseStatus.SERVER_ERROR);
+        }
+    }
+
 }

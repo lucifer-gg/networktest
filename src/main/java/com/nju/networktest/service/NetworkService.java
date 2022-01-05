@@ -16,4 +16,6 @@ public interface NetworkService {
 
     boolean establishConnect();
 
+    void flashAll();
+
 }
